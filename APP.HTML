@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA - Social App</title>
+    <!-- App Icon -->
+    <link rel="icon" type="image/svg+xml" href="images/app-icon.svg">
+    <style>
+        :root {
+            --gold: #FFD700;
+            --gold-gradient: linear-gradient(90deg, #FFD700 0%, #FFF7AE 100%);
+            --black: #111;
+            --white: #fff;
+        }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--white);
+            color: var(--black);
+        }
+        .header {
+            background: var(--black);
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 32px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: var(--gold-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: none;
+            box-shadow: 0 2px 8px #FFD70033;
+        }
+        .nav {
+            display: flex;
+            gap: 32px;
+        }
+        .nav a {
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 1.1rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            transition: background 0.2s, color 0.2s;
+        }
+        .nav a:hover, .nav a.active {
+            background: var(--gold-gradient);
+            color: var(--black);
+        }
+        .profile-menu {
+            position: relative;
+            display: inline-block;
+        }
+        .profile-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--gold);
+            cursor: pointer;
+            object-fit: cover;
+            transition: box-shadow 0.2s;
+        }
+        .profile-avatar:hover {
+            box-shadow: 0 0 0 4px #FFD70044;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 54px;
+            background: var(--white);
+            min-width: 140px;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.13);
+            border-radius: 12px;
+            overflow: hidden;
+            z-index: 100;
+        }
+        .dropdown a {
+            display: block;
+            padding: 12px 18px;
+            color: var(--black);
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .dropdown a:hover {
+            background: var(--gold-gradient);
+            color: var(--black);
+        }
+        .profile-menu.open .dropdown {
+            display: block;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: var(--white);
+            border-radius: 18px;
+            box-shadow: 0 2px 24px rgba(0,0,0,0.10);
+            padding: 28px 20px 24px 20px;
+        }
+        .composer {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 36px;
+        }
+        .avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: var(--gold);
+            border: 2px solid var(--black);
+            object-fit: cover;
+        }
+        .composer textarea {
+            flex: 1;
+            border: 1.5px solid var(--gold);
+            border-radius: 14px;
+            padding: 14px;
+            font-size: 1.08rem;
+            resize: none;
+            min-height: 48px;
+            background: var(--white);
+            color: var(--black);
+            transition: box-shadow 0.2s, min-height 0.2s;
+            box-shadow: 0 1px 4px #FFD70022;
+        }
+        .composer textarea:focus {
+            outline: none;
+            box-shadow: 0 2px 12px #FFD70055;
+            min-height: 80px;
+        }
+        .composer button {
+            background: var(--gold-gradient);
+            color: var(--black);
+            border: none;
+            border-radius: 14px;
+            padding: 12px 24px;
+            font-weight: bold;
+            font-size: 1.08rem;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            box-shadow: 0 1px 4px #FFD70033;
+        }
+        .composer button:hover {
+            background: var(--black);
+            color: var(--gold);
+        }
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .post {
+            background: var(--black);
+            color: var(--white);
+            border-radius: 14px;
+            padding: 20px 18px 16px 18px;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+            box-shadow: 0 1px 8px rgba(0,0,0,0.10);
+            position: relative;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .post:hover {
+            box-shadow: 0 4px 24px #FFD70033;
+            transform: translateY(-2px) scale(1.01);
+        }
+        .post .avatar {
+            border: 2px solid var(--gold);
+        }
+        .post-content {
+            flex: 1;
+        }
+        .post-header {
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 6px;
+            font-size: 1.08rem;
+        }
+        .post-time {
+            font-size: 0.93em;
+            color: #bbb;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+        .post-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 22px;
+        }
+        .post-actions span {
+            cursor: pointer;
+            color: var(--gold);
+            font-size: 1.18em;
+            transition: color 0.2s, transform 0.2s;
+            user-select: none;
+            display: inline-block;
+        }
+        .post-actions span.liked {
+            color: #fff;
+            text-shadow: 0 0 8px #FFD700, 0 0 2px #FFD700;
+            transform: scale(1.2) rotate(-10deg);
+        }
+        .post-actions span:active {
+            transform: scale(0.95);
+        }
+        /* Responsive */
+        @media (max-width: 700px) {
+            .container {
+                max-width: 99vw;
+                padding: 8px;
+            }
+            .header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 12px;
+            }
+            .composer textarea {
+                font-size: 1rem;
+            }
+        }
+    .visually-hidden {
+        position: absolute !important;
+        height: 1px; width: 1px;
+        overflow: hidden;
+        clip: rect(1px, 1px, 1px, 1px);
+        white-space: nowrap;
+    }
+    </style>
+</head>
+<body>
+    <header class="header">
+    <span class="logo">NOVA</span>
+        <nav class="nav" aria-label="Main navigation">
+            <a href="#" class="active">Home</a>
+            <a href="#">Explore</a>
+            <a href="#">Profile</a>
+        </nav>
+        <div class="profile-menu" id="profileMenu">
+            <img class="profile-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Your profile avatar" width="44" height="44">
+            <div class="dropdown" id="dropdownMenu" role="menu">
+                <a href="#">My Profile</a>
+                <a href="#">Settings</a>
+                <a href="#">Logout</a>
+            </div>
+        </div>
+    </header>
+    <main class="container">
+        <section class="composer" aria-label="Create a post">
+            <img class="avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Your avatar" width="52" height="52">
+            <textarea id="postInput" placeholder="What's happening on NOVA?" aria-label="Post text"></textarea>
+            <button id="postBtn" aria-label="Post">Post</button>
+        </section>
+        <section class="feed" id="feed" aria-label="Feed">
+            <article class="post">
+                <h2 class="visually-hidden">Post by @goldenqueen</h2>
+                <img class="avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User avatar for @goldenqueen" width="52" height="52">
+                <div class="post-content">
+                    <div class="post-header">
+                        @goldenqueen <span class="post-time">· 2m</span>
+                    </div>
+                    <div>
+                        Loving the new NOVA app! The gold and black theme is 🔥
+                    </div>
+                    <div class="post-actions">
+                        <span class="comment" title="Comment" tabindex="0" role="button">💬</span>
+                        <span class="repost" title="Repost" tabindex="0" role="button">🔁</span>
+                        <span class="like" title="Like" tabindex="0" role="button">⭐</span>
+                    </div>
+                </div>
+            </article>
+            <article class="post">
+                <h2 class="visually-hidden">Post by @novauser</h2>
+                <img class="avatar" src="https://randomuser.me/api/portraits/men/65.jpg" alt="User avatar for @novauser" width="52" height="52">
+                <div class="post-content">
+                    <div class="post-header">
+                        @novauser <span class="post-time">· 10m</span>
+                    </div>
+                    <div>
+                        Just joined NOVA! Excited to connect with everyone here. #FirstPost
+                    </div>
+                    <div class="post-actions">
+                        <span class="comment" title="Comment" tabindex="0" role="button">💬</span>
+                        <span class="repost" title="Repost" tabindex="0" role="button">🔁</span>
+                        <span class="like" title="Like" tabindex="0" role="button">⭐</span>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+    </main>
+    <script>
+        // Profile dropdown
+        const profileMenu = document.getElementById('profileMenu');
+        profileMenu.addEventListener('click', function(e) {
+            this.classList.toggle('open');
+            e.stopPropagation();
+        });
+        document.body.addEventListener('click', function() {
+            profileMenu.classList.remove('open');
+        });
+
+        // Add new post functionality
+        const postBtn = document.getElementById('postBtn');
+        const postInput = document.getElementById('postInput');
+        const feed = document.getElementById('feed');
+        const userAvatar = "https://randomuser.me/api/portraits/men/32.jpg";
+        const username = "@you";
+
+        postBtn.addEventListener('click', function() {
+            const text = postInput.value.trim();
+            if (text.length === 0) return;
+            const postDiv = document.createElement('div');
+            postDiv.className = 'post';
+            postDiv.innerHTML = `
+                <img class="avatar" src="${userAvatar}" alt="User">
+                <div class="post-content">
+                    <div class="post-header">
+                        ${username} <span class="post-time">· now</span>
+                    </div>
+                    <div>${escapeHTML(text)}</div>
+                    <div class="post-actions">
+                        <span class="comment" title="Comment">💬</span>
+                        <span class="repost" title="Repost">🔁</span>
+                        <span class="like" title="Like">⭐</span>
+                    </div>
+                </div>
+            `;
+            feed.prepend(postDiv);
+            postInput.value = "";
+        });
+
+        // Like button functionality with animation
+        feed.addEventListener('click', function(e) {
+            if (e.target.classList.contains('like')) {
+                e.target.classList.toggle('liked');
+            }
+        });
+
+        // Escape HTML to prevent XSS
+        function escapeHTML(str) {
+            return str.replace(/[&<>"']/g, function(m) {
+                return ({
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                })[m];
+            });
+        }
+    </script>
+</body>
+</html>
